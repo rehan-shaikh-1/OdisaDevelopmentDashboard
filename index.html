@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odisha Development Dashboard - Powered by Wolfram Language</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Odisha Development Dashboard</h1>
+                <span class="wolfram-badge" id="wolframStatus">
+                    <i class="fas fa-cloud" id="cloudIcon"></i>
+                    <span id="connectionStatus">Powered by Wolfram Language</span>
+                </span>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search districts, metrics..." id="searchInput">
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="api-status" id="apiStatus">
+                <div class="status-dot active" id="statusDot"></div>
+                <span id="apiResponseTime">245ms</span>
+            </div>
+            <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="dev-console-btn" id="devConsoleBtn" title="Show Developer Console">
+                <i class="fas fa-terminal"></i>
+            </button>
+            <div class="user-profile">
+                <i class="fas fa-user-circle"></i>
+                <span>Admin User</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <ul class="nav-menu">
+                <li class="nav-item active" data-metric="overview">
+                    <i class="fas fa-home"></i>
+                    <span>Overview</span>
+                    <div class="wolfram-hint">GeoRegionValuePlot</div>
+                </li>
+                <li class="nav-item" data-metric="literacy">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Literacy</span>
+                    <div class="wolfram-hint">GeoRegionValuePlot</div>
+                </li>
+                <li class="nav-item" data-metric="agriculture">
+                    <i class="fas fa-seedling"></i>
+                    <span>Agriculture</span>
+                    <div class="wolfram-hint">BarChart, TimeSeries</div>
+                </li>
+                <li class="nav-item" data-metric="infrastructure">
+                    <i class="fas fa-building"></i>
+                    <span>Infrastructure</span>
+                    <div class="wolfram-hint">GeoBubbleChart</div>
+                </li>
+                <li class="nav-item" data-metric="economy">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Economy</span>
+                    <div class="wolfram-hint">ListLinePlot</div>
+                </li>
+                <li class="nav-item" data-metric="health">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>Health</span>
+                    <div class="wolfram-hint">BubbleChart</div>
+                </li>
+            </ul>
+            
+            <div class="wolfram-integration">
+                <h4>Wolfram Integration</h4>
+                <div class="integration-status">
+                    <div class="status-indicator active" id="wolframConnectionStatus"></div>
+                    <span id="connectionText">Cloud Connected</span>
+                </div>
+                <div class="api-metrics">
+                    <div class="metric-item">
+                        <span>API Calls:</span>
+                        <span id="apiCallCount">127</span>
+                    </div>
+                    <div class="metric-item">
+                        <span>Avg Response:</span>
+                        <span id="avgResponseTime">245ms</span>
+                    </div>
+                    <div class="metric-item">
+                        <span>Last Sync:</span>
+                        <span id="lastSyncTime">2s ago</span>
+                    </div>
+                </div>
+                <button class="btn btn--sm wolfram-deploy" id="deployBtn">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    Deploy to Cloud
+                </button>
+                <button class="btn btn--sm btn--outline" id="testConnectionBtn">
+                    <i class="fas fa-plug"></i>
+                    Test Connection
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="control-group">
+                    <label>Time Range</label>
+                    <div class="slider-container">
+                        <input type="range" id="timeSlider" min="2014" max="2024" value="2024" class="time-slider">
+                        <div class="slider-labels">
+                            <span>2014</span>
+                            <span id="currentYear">2024</span>
+                            <span>2024</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="districtSelect">Districts</label>
+                    <div class="custom-select">
+                        <select id="districtSelect" class="form-control" multiple>
+                            <option value="all" selected>All Districts</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="analysisType">Analysis Type</label>
+                    <div class="custom-select">
+                        <select id="analysisType" class="form-control">
+                            <option value="overview">Overview</option>
+                            <option value="trends">Trends</option>
+                            <option value="correlations">Correlations</option>
+                            <option value="predictions">Predictions</option>
+                            <option value="comparisons">Comparisons</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <button class="btn btn--primary" id="exportBtn">
+                        <i class="fas fa-download"></i>
+                        Export Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card" id="literacyKpi" title="Click to view literacy metrics">
+                    <div class="kpi-icon">📚</div>
+                    <div class="kpi-content">
+                        <h3>Literacy Rate</h3>
+                        <div class="kpi-value">73.45%</div>
+                        <div class="kpi-trend positive">+2.3% ↗</div>
+                        <div class="api-tag">GeoRegionValuePlot</div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card" id="agricultureKpi" title="Click to view agriculture metrics">
+                    <div class="kpi-icon">🌾</div>
+                    <div class="kpi-content">
+                        <h3>Agricultural Output</h3>
+                        <div class="kpi-value">15.2M Tonnes</div>
+                        <div class="kpi-trend positive">+1.8% ↗</div>
+                        <div class="api-tag">BarChart</div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card" id="infrastructureKpi" title="Click to view infrastructure metrics">
+                    <div class="kpi-icon">🏗️</div>
+                    <div class="kpi-content">
+                        <h3>Infrastructure Index</h3>
+                        <div class="kpi-value">68.7</div>
+                        <div class="kpi-trend positive">+4.2% ↗</div>
+                        <div class="api-tag">GeoBubbleChart</div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card" id="economyKpi" title="Click to view economy metrics">
+                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-content">
+                        <h3>Per Capita Income</h3>
+                        <div class="kpi-value">₹89,456</div>
+                        <div class="kpi-trend positive">+3.1% ↗</div>
+                        <div class="api-tag">TimeSeries</div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card" id="healthKpi" title="Click to view health metrics">
+                    <div class="kpi-icon">🏥</div>
+                    <div class="kpi-content">
+                        <h3>Health Index</h3>
+                        <div class="kpi-value">82.3</div>
+                        <div class="kpi-trend positive">+2.7% ↗</div>
+                        <div class="api-tag">BubbleChart</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Visualization Area -->
+            <div class="visualization-grid">
+                <div class="viz-card main-viz">
+                    <div class="card-header">
+                        <h3 id="vizTitle">Odisha Development Overview</h3>
+                        <div class="viz-controls">
+                            <div class="processing-status" id="processingStatus">
+                                <i class="fas fa-cog fa-spin hidden" id="processingIcon"></i>
+                                <span id="processingText">Ready</span>
+                            </div>
+                            <div class="wolfram-badge" title="Click to view Wolfram integration details">
+                                <i class="fas fa-code"></i>
+                                <span>Wolfram Generated</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container main-chart" style="position: relative; height: 400px;">
+                        <canvas id="mainChart"></canvas>
+                        <div class="loading-spinner hidden" id="chartLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>Calling Wolfram API...</span>
+                            <div class="api-call-info">
+                                <code id="currentApiCall">GET /api/wolfram/geo-plot/overview</code>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wolfram-code-snippet">
+                        <div class="code-header">
+                            <span>Wolfram Language Code:</span>
+                            <button class="copy-code-btn" id="copyCodeBtn" title="Copy to clipboard">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <code id="wolframCode">
+                            GeoRegionValuePlot[
+                              Entity["AdministrativeDivision", "Odisha", "India"],
+                              "CompositeIndex", 
+                              GeoBackground -> "ReliefMap",
+                              PlotLegends -> Automatic
+                            ]
+                        </code>
+                    </div>
+                </div>
+
+                <div class="viz-card secondary-viz">
+                    <div class="card-header">
+                        <h3>Trend Analysis</h3>
+                        <div class="api-badge">TimeSeries</div>
+                    </div>
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="viz-card secondary-viz">
+                    <div class="card-header">
+                        <h3>Correlation Matrix</h3>
+                        <div class="api-badge">CorrelationMatrix</div>
+                    </div>
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <canvas id="correlationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Section -->
+            <div class="analysis-section">
+                <div class="analysis-card">
+                    <h3>Predictive Analytics</h3>
+                    <div class="prediction-summary">
+                        <div class="prediction-item">
+                            <h4>2025 Literacy Forecast</h4>
+                            <div class="prediction-value">75.8% <span class="confidence">(95% confidence)</span></div>
+                            <div class="wolfram-function">Using Predict[] function</div>
+                        </div>
+                        <div class="prediction-item">
+                            <h4>Economic Growth Projection</h4>
+                            <div class="prediction-value">₹95,200 <span class="confidence">(85% confidence)</span></div>
+                            <div class="wolfram-function">Using TimeSeriesForecast[]</div>
+                        </div>
+                    </div>
+                    <button class="btn btn--sm btn--outline" id="runPredictionBtn">
+                        <i class="fas fa-brain"></i>
+                        Run Advanced Prediction
+                    </button>
+                </div>
+
+                <div class="analysis-card">
+                    <h3>Data Pipeline Status</h3>
+                    <div class="pipeline-steps">
+                        <div class="pipeline-step completed">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Data Import</span>
+                            <div class="step-time">245ms</div>
+                        </div>
+                        <div class="pipeline-step completed">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Wolfram Processing</span>
+                            <div class="step-time">892ms</div>
+                        </div>
+                        <div class="pipeline-step completed">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Visualization</span>
+                            <div class="step-time">156ms</div>
+                        </div>
+                        <div class="pipeline-step">
+                            <i class="fas fa-clock"></i>
+                            <span>Export Ready</span>
+                            <div class="step-time">Ready</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Developer Console Panel -->
+    <div class="dev-console hidden" id="devConsole">
+        <div class="console-header">
+            <h3>Developer Console - Wolfram API Integration</h3>
+            <div class="console-controls">
+                <button class="btn btn--sm" id="clearConsole">Clear</button>
+                <button class="btn btn--sm console-close" id="closeConsole">×</button>
+            </div>
+        </div>
+        <div class="console-content">
+            <div class="console-section">
+                <h4>API Call Log</h4>
+                <div class="api-log" id="apiLog">
+                    <div class="log-entry success">
+                        <span class="timestamp">18:50:23</span>
+                        <span class="method">GET</span>
+                        <span class="endpoint">/api/wolfram/geo-visualization</span>
+                        <span class="status">200</span>
+                        <span class="time">245ms</span>
+                    </div>
+                </div>
+            </div>
+            <div class="console-section">
+                <h4>Wolfram Function Calls</h4>
+                <div class="wolfram-calls" id="wolframCalls">
+                    <div class="call-entry">
+                        <span class="function">GeoRegionValuePlot</span>
+                        <span class="params">["Odisha", "CompositeIndex"]</span>
+                        <span class="result">Success</span>
+                    </div>
+                </div>
+            </div>
+            <div class="console-section">
+                <h4>Performance Metrics</h4>
+                <div class="performance-grid">
+                    <div class="metric">
+                        <span>Total API Calls:</span>
+                        <span id="totalApiCalls">127</span>
+                    </div>
+                    <div class="metric">
+                        <span>Success Rate:</span>
+                        <span id="successRate">98.4%</span>
+                    </div>
+                    <div class="metric">
+                        <span>Avg Response Time:</span>
+                        <span id="avgResponseTimeConsole">245ms</span>
+                    </div>
+                    <div class="metric">
+                        <span>Data Processed:</span>
+                        <span id="dataProcessed">15.2MB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Wolfram Integration -->
+    <div class="modal hidden" id="wolframModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Wolfram Language Integration Architecture</h3>
+                <button class="modal-close" id="closeModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="integration-architecture">
+                    <h4>Data Flow Architecture</h4>
+                    <div class="architecture-flow">
+                        <div class="flow-item">Frontend Dashboard</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-item">API Gateway</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-item">Wolfram Cloud</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-item">Data Processing</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-item">Visualization</div>
+                    </div>
+                </div>
+                
+                <div class="api-endpoints">
+                    <h4>Active API Endpoints</h4>
+                    <ul>
+                        <li><code>GET /api/wolfram/geo-visualization/{metric}</code> - Geographic data visualization</li>
+                        <li><code>POST /api/wolfram/time-series</code> - Time series analysis</li>
+                        <li><code>GET /api/wolfram/correlations</code> - Correlation matrix computation</li>
+                        <li><code>POST /api/wolfram/predict</code> - Predictive analytics</li>
+                        <li><code>GET /api/wolfram/export/{format}</code> - Data export functions</li>
+                    </ul>
+                </div>
+                
+                <div class="authentication-section">
+                    <h4>Authentication & Security</h4>
+                    <div class="auth-status">
+                        <div class="auth-item">
+                            <span>API Key Status:</span>
+                            <span class="status-badge success">Active</span>
+                        </div>
+                        <div class="auth-item">
+                            <span>Cloud Authentication:</span>
+                            <span class="status-badge success">Verified</span>
+                        </div>
+                        <div class="auth-item">
+                            <span>Data Encryption:</span>
+                            <span class="status-badge success">TLS 1.3</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sample-code">
+                    <h4>Sample Integration Code</h4>
+                    <pre><code>
+// Frontend API Call
+const response = await fetch('/api/wolfram/geo-visualization/literacy', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer ${API_KEY}',
+    'Content-Type': 'application/json'
+  }
+});
+
+// Wolfram Language Backend Function
+GeoRegionValuePlot[
+  Entity["AdministrativeDivision", "Odisha", "India"],
+  "LiteracyRate",
+  GeoBackground -> "ReliefMap",
+  ColorFunction -> "BlueGreenYellow",
+  PlotLegends -> Automatic
+]
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

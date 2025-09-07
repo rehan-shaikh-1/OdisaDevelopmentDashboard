@@ -1,0 +1,139 @@
+{
+  "technical_specs": {
+    "Technical Requirements": {
+      "Core Technologies": {
+        "Primary": "Wolfram Language / Mathematica",
+        "Deployment": "Wolfram Cloud",
+        "Data Formats": [
+          "CSV",
+          "JSON",
+          "XML",
+          "API"
+        ],
+        "Version": "Wolfram Language 13.0+"
+      },
+      "Key Functions Used": {
+        "Interactive": [
+          "Manipulate",
+          "Dynamic",
+          "DynamicModule"
+        ],
+        "Visualization": [
+          "GeoRegionValuePlot",
+          "TimeSeries",
+          "BarChart",
+          "BubbleChart"
+        ],
+        "Geographic": [
+          "GeoGraphics",
+          "GeoBubbleChart",
+          "GeoListPlot"
+        ],
+        "Layout": [
+          "Grid",
+          "TabView",
+          "OpenerView",
+          "Panel"
+        ],
+        "Deployment": [
+          "CloudDeploy",
+          "FormFunction",
+          "APIFunction"
+        ]
+      }
+    },
+    "Data Sources": {
+      "Primary Sources": [
+        "Open Government Data Platform India (data.gov.in)",
+        "Odisha Data Portal (odisha.data.gov.in)",
+        "Agricultural Statistics at a Glance",
+        "Odisha Economic Survey 2024-25",
+        "Census India Data"
+      ],
+      "Data Coverage": {
+        "Geographic": "30 districts of Odisha",
+        "Temporal": "2014-2024 (10 years)",
+        "Metrics": "5 core development indicators",
+        "Update Frequency": "Annual/Quarterly"
+      }
+    },
+    "Features Implementation": {
+      "Level 1 (MVP)": [
+        "Basic district-wise visualization",
+        "Time series analysis",
+        "Interactive metric selection",
+        "Geographic mapping",
+        "Simple comparison tools"
+      ],
+      "Level 2 (Enhanced)": [
+        "Multi-metric correlation analysis",
+        "Predictive trend modeling",
+        "Advanced filtering options",
+        "Export functionality",
+        "Mobile responsiveness"
+      ],
+      "Level 3 (Advanced)": [
+        "Real-time data integration",
+        "Machine learning insights",
+        "Custom report generation",
+        "API for third-party access",
+        "Multi-language support"
+      ]
+    }
+  },
+  "evaluation_criteria": {
+    "Technical Implementation (25%)": {
+      "Wolfram Language Usage": {
+        "Excellent (23-25)": "Advanced functions like Manipulate, Dynamic, GeoGraphics with complex interactions",
+        "Good (20-22)": "Solid use of core functions with some advanced features",
+        "Satisfactory (15-19)": "Basic plotting and visualization functions",
+        "Needs Improvement (0-14)": "Minimal or incorrect use of Wolfram Language"
+      },
+      "Code Quality": {
+        "Clean, well-documented code": 5,
+        "Efficient algorithms": 5,
+        "Error handling": 5,
+        "Modularity": 5
+      }
+    },
+    "Innovation & Creativity (20%)": {
+      "Novel Approaches": {
+        "Unique visualization techniques": 5,
+        "Creative use of Wolfram features": 5,
+        "Innovative analysis methods": 5,
+        "Original insights": 5
+      }
+    },
+    "Functionality & Completeness (20%)": {
+      "Core Features": {
+        "All 5 metrics implemented": 5,
+        "Interactive controls working": 5,
+        "Geographic visualization": 5,
+        "Time series analysis": 5
+      }
+    },
+    "User Experience (15%)": {
+      "Interface Design": {
+        "Intuitive navigation": 4,
+        "Visual appeal": 3,
+        "Responsive design": 4,
+        "Accessibility": 4
+      }
+    },
+    "Scalability & Impact (10%)": {
+      "Real-world Application": {
+        "Government usability": 3,
+        "Stakeholder value": 3,
+        "Deployment readiness": 4
+      }
+    },
+    "Presentation Quality (10%)": {
+      "Demo Effectiveness": {
+        "Clear problem articulation": 3,
+        "Technical demonstration": 4,
+        "Impact storytelling": 3
+      }
+    }
+  },
+  "total_points": 95
+}
